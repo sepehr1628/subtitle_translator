@@ -1,77 +1,111 @@
-import { useState } from "react";
-import SubtitlePlaceholder from "../UI/SubtitlePlaceholder";
+import React, { useState } from "react";
+import translate from "google-translate-free";
 
 const Main: React.FC = () => {
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [translatedText, setTranslatedText] = useState<string | null>(null);
 
-  function handleDrop(e: React.DragEvent<HTMLDivElement>) {
+  // Translate text using the LibreTranslate API
+  const translateText = async (text: string, targetLanguage: string) => {
+    try {
+      const response = await fetch("http://localhost:5000/translate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          text,
+          targetLanguage,
+        }),
+      });
+      const data = await response.json();
+      return data.translatedText;
+    } catch (error) {
+      console.error("Translation error:", error);
+      return "Translation failed.";
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     const file = e.dataTransfer.files[0];
-
     removeDraggedOverClass();
     if (file?.name.endsWith(".srt")) {
       setUploadedFile(file);
       readFile(file);
-      console.log(file.name);
     } else {
       alert("Unsupported file type. Please upload a .srt file.");
     }
-  }
+  };
 
-  function readFile(file: File) {
+  const readFile = (file: File) => {
     const reader = new FileReader();
-
-    reader.onload = () => {
-      console.log("File content:", reader.result);
+    reader.onload = async () => {
+      const fileContent = reader.result as string;
+      console.log(fileContent);
+      const translated = await translateText("Hello World", "fa");
+      setTranslatedText(translated);
     };
-
     reader.onerror = () => {
       console.error("Error reading file:", reader.error);
     };
-
     reader.readAsText(file);
-  }
+  };
 
-  function handleDragOver(e: React.DragEvent<HTMLDivElement>) {
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
-    const dropZone = e.currentTarget as HTMLDivElement;
-    dropZone.classList.add("dragged-over");
-  }
+    e.currentTarget.classList.add("dragged-over");
+  };
 
-  function handlePointerLeave() {
-    removeDraggedOverClass();
-  }
-
-  function removeDraggedOverClass() {
+  const removeDraggedOverClass = () => {
     const dropZone = document.querySelector(".drop-zone");
-    if (dropZone) {
-      dropZone.classList.remove("dragged-over");
+    dropZone?.classList.remove("dragged-over");
+  };
+
+  const handleDownload = () => {
+    if (!translatedText) {
+      alert("Please translate the file first.");
+      return;
     }
-  }
+
+    // Create a Blob with the translated text
+    const blob = new Blob([translatedText], { type: "text/plain" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "translated_subtitle.srt"; // You can change the file extension if needed
+    link.click();
+  };
 
   return (
     <main className="main">
       <div
         className="drop-zone"
-        onClick={() => console.log("clicked")}
         onDrop={handleDrop}
         onDragOver={handleDragOver}
-        onDragLeave={handlePointerLeave}
-        onMouseLeave={handlePointerLeave}
+        onDragLeave={removeDraggedOverClass}
+        onMouseLeave={removeDraggedOverClass}
       >
         {uploadedFile ? (
-          <SubtitlePlaceholder subtitleName={uploadedFile.name} />
+          <p>Uploaded file: {uploadedFile.name}</p>
         ) : (
-          "drag file here or click to choose file!"
+          "Drag file here or click to choose file!"
         )}
         <input
           type="file"
+          className="subtitle-input"
           name="subtitle_input"
           accept=".srt"
-          draggable="true"
-          className="subtitle-input"
+          onChange={(e) => {
+            const file = e.target.files?.[0];
+            if (file) readFile(file);
+          }}
         />
+        <button type="button" onClick={handleDownload}>
+          Download Translated File
+        </button>
       </div>
+
+      {translatedText && <p>{translatedText}</p>}
     </main>
   );
 };
