@@ -127,6 +127,7 @@ body {
 @media only screen and (max-width: 768px) {
   .drop-zone {
     font-size: 1rem;
+    padding-inline: 2rem;
   }
 }
 @media only screen and (max-width: 425px) {
