@@ -78,6 +78,7 @@ body {
 }
 
 .drop-zone {
+  text-align: center;
   width: 80%;
   height: 80vh;
   margin: auto;
@@ -90,6 +91,7 @@ body {
   font-size: 1.5rem;
   font-weight: 900;
   font-family: Arial, Helvetica, sans-serif;
+  padding-block: 2rem;
 }
 
 .dragged-over {
@@ -110,4 +112,29 @@ body {
 
 .uploaded-subtitle-container__icon {
   width: 50px;
+}
+
+@media only screen and (max-width: 991px) {
+  .logo {
+    width: 70px;
+  }
+
+  .header__description {
+    display: none;
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  .drop-zone {
+    font-size: 1rem;
+  }
+}
+@media only screen and (max-width: 425px) {
+  .navbar__list {
+    display: none;
+  }
+
+  .uploaded-subtitle-container {
+    flex-direction: column;
+  }
 }

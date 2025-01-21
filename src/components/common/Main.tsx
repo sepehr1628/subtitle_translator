@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import translate from "google-translate-free";
+import SubtitlePlaceholder from "../UI/SubtitlePlaceholder";
 
 const Main: React.FC = () => {
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
@@ -86,7 +87,7 @@ const Main: React.FC = () => {
         onMouseLeave={removeDraggedOverClass}
       >
         {uploadedFile ? (
-          <p>Uploaded file: {uploadedFile.name}</p>
+          <SubtitlePlaceholder subtitleName={uploadedFile.name} />
         ) : (
           "Drag file here or click to choose file!"
         )}
@@ -100,12 +101,7 @@ const Main: React.FC = () => {
             if (file) readFile(file);
           }}
         />
-        <button type="button" onClick={handleDownload}>
-          Download Translated File
-        </button>
       </div>
-
-      {translatedText && <p>{translatedText}</p>}
     </main>
   );
 };
