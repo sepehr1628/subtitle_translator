@@ -30,8 +30,9 @@ node index.js
 
 Now your translated subtitle is cooked. Actually it suppossed to be cooked.
 
-# Why Script Works But Not The Page?
+# 🤔 Why Script Works But Not The Page?
 There is two kind of libraries support translation:
+
 1.Those run in nodejs environment so they don't need any additional tool to translate and work fine.
 
 2.Those work in client side and needs api key to work
