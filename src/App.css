@@ -92,6 +92,7 @@ body {
   font-weight: 900;
   font-family: Arial, Helvetica, sans-serif;
   padding-block: 2rem;
+  cursor: pointer;
 }
 
 .dragged-over {
